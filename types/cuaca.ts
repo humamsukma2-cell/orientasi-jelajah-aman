@@ -7,11 +7,7 @@ export interface DataCuaca {
   catatan?: string;
 }
 
-export type TingkatAQI =
-  "BAIK" |
-  "SEDANG" |
-  "TIDAK_SEHAT" |
-  "BERBAHAYA";
+export type TingkatAQI = "BAIK" | "SEDANG" | "TIDAK_SEHAT" | "BERBAHAYA";
 
 export interface WeatherCardProps {
   kota: string;
@@ -25,4 +21,10 @@ export interface LaporanUdara {
   indeksAQI: number;
   tingkat: TingkatAQI;
   diperbaruiPada?: string;
+}
+export interface WeatherCardProps {
+  kota: string;
+  suhu: number;
+  tingkatAQI: TingkatAQI;
+  indeksAQI?: number; // baru: angka asli dari API, opsional
 }
