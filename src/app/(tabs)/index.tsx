@@ -1,6 +1,6 @@
 // src/app/(tabs)/index.tsx
-import { useState, useEffect, useRef } from "react";
-import { router } from "expo-router";
+import { useState, useEffect, useRef, useCallback } from "react";
+import { router, useFocusEffect } from "expo-router";
 import {
   View,
   Text,
@@ -16,6 +16,7 @@ import { useDebounce } from "../../hooks/use-debounce";
 import { cariKota } from "../../services/geocodingService";
 import { ambilCuaca } from "../../services/weatherService";
 import { ambilKualitasUdara } from "../../services/airQualityService";
+import { ambilSemuaFavorit } from "../../services/favoritStorage";
 import { konversiTingkatAQI } from "../../services/weatherAdapter";
 import { labelKodeCuaca } from "../../constants/weatherCodes";
 import { HasilGeocoding } from "../../../types/geocoding";
@@ -36,6 +37,7 @@ export default function HalamanUtama() {
   const [sedangMemuat, setSedangMemuat] = useState(false);
   const [pesanError, setPesanError] = useState<string | null>(null);
   const [pesanLokasi, setPesanLokasi] = useState<string | null>(null);
+  const [sudahFavorit, setSudahFavorit] = useState(false);
   const teksTertunda = useDebounce(teksCari, 500);
   const requestIdRef = useRef(0); // pencegah race condition
   useEffect(() => {
@@ -94,6 +96,24 @@ export default function HalamanUtama() {
       country: "",
     });
   }
+  useFocusEffect(
+    useCallback(() => {
+      async function cekFavorit() {
+        if (!kotaTerpilih) {
+          setSudahFavorit(false);
+          return;
+        }
+
+        const daftarFavorit = await ambilSemuaFavorit();
+
+        const ada = daftarFavorit.some((kota) => kota.id === kotaTerpilih.id);
+
+        setSudahFavorit(ada);
+      }
+
+      cekFavorit();
+    }, [kotaTerpilih]),
+  );
   return (
     <SafeAreaView style={{ flex: 1, padding: 16, gap: 16 }}>
       <SearchBox onCari={setTeksCari} />
@@ -123,23 +143,24 @@ export default function HalamanUtama() {
             tingkatAQI={konversiTingkatAQI(kualitasUdara.indeksAQI)}
             pm25={kualitasUdara.pm25}
             pm10={kualitasUdara.pm10}
-            
           />
-          
-          <Button
-            title="Tambahkan ke Favorit"
-            onPress={() =>
-              router.push({
-                pathname: "/tambah-favorit",
-                params: {
-                  id: String(kotaTerpilih.id),
-                  nama: kotaTerpilih.name,
-                  lat: String(kotaTerpilih.latitude),
-                  lon: String(kotaTerpilih.longitude),
-                },
-              })
-            }
-          />
+
+          {!sudahFavorit && (
+            <Button
+              title="Tambahkan ke Favorit"
+              onPress={() =>
+                router.push({
+                  pathname: "/tambah-favorit",
+                  params: {
+                    id: String(kotaTerpilih.id),
+                    nama: kotaTerpilih.name,
+                    lat: String(kotaTerpilih.latitude),
+                    lon: String(kotaTerpilih.longitude),
+                  },
+                })
+              }
+            />
+          )}
 
           <View style={{ gap: 4 }}>
             <Text>Suhu Maksimal: {cuaca.harian.suhuMaksimal[0]}°C</Text>
