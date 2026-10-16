@@ -6,7 +6,13 @@ export default function HalamanDetail() {
   const { kota } = useLocalSearchParams<{ kota: string }>();
   return (
     <View style={{ padding: 16, gap: 16 }}>
-      <WeatherCard kota={kota} suhu={29} tingkatAQI="BAIK" />
+      <WeatherCard
+        kota={kota}
+        suhu={29}
+        tingkatAQI="BAIK"
+        pm25={12}
+        pm10={20}
+      />
       <Button
         title="Tambahkan ke Favorit"
         onPress={() => router.push("/tambah-favorit")}
