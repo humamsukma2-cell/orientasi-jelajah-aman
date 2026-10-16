@@ -1,5 +1,9 @@
 # Welcome to your Expo app 👋
 
+## Status Data & Cache Offline-First
+
+Aplikasi ini memakai strategi offline-first dengan tiga kemungkinan status data. **Cache segar** berarti data diambil dari penyimpanan lokal (SQLite) yang umurnya masih di bawah TTL (30 menit), sehingga langsung dipakai tanpa memanggil internet. **Cache basi** berarti data lokal sudah melewati TTL dan dipakai sebagai cadangan karena internet gagal diakses, sehingga isinya mungkin sudah usang. **Firstrun offline** adalah kondisi paling awal saat belum ada cache sama sekali dan internet juga tidak tersedia, sehingga aplikasi tidak memiliki data untuk ditampilkan. Label status data penting bagi pengguna karena memberi tahu dari mana angka cuaca berasal dan seberapa baru datanya, agar mereka tidak salah mengambil keputusan berdasarkan informasi yang sudah lama.
+
 This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
 
 ## Get started
