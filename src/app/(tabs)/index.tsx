@@ -158,8 +158,6 @@ export default function HalamanUtama() {
                 <Text>{k.nama}</Text>
               </TouchableOpacity>
             ))}
-            Modul Praktikum (Detail, src/) — Pertemuan 7 — Pemrograman Berbasis
-            Platform Halaman 14 dari 22
           </View>
         )}
         {sedangMemuat && <ActivityIndicator />}
