@@ -21,3 +21,35 @@ const kamusKodeCuaca: Record<number, string> = {
 export function labelKodeCuaca(kode: number): string {
   return kamusKodeCuaca[kode] ?? "Tidak diketahui";
 }
+
+// Nama ikon Ionicons untuk setiap kode cuaca WMO.
+export type NamaIkonCuaca =
+  | "sunny"
+  | "partly-sunny"
+  | "cloudy"
+  | "cloud-outline"
+  | "water"
+  | "rainy"
+  | "snow"
+  | "thunderstorm";
+
+export function ikonKodeCuaca(kode: number): NamaIkonCuaca {
+  if (kode === 0) return "sunny";
+  if (kode === 1 || kode === 2) return "partly-sunny";
+  if (kode === 3) return "cloudy";
+  if (kode === 45 || kode === 48) return "cloud-outline";
+  if (kode === 51 || kode === 53 || kode === 55) return "water";
+  if (
+    kode === 61 ||
+    kode === 63 ||
+    kode === 65 ||
+    kode === 80 ||
+    kode === 81 ||
+    kode === 82
+  ) {
+    return "rainy";
+  }
+  if (kode === 71) return "snow";
+  if (kode === 95) return "thunderstorm";
+  return "cloud-outline";
+}
