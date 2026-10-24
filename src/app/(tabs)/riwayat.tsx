@@ -1,7 +1,7 @@
 // src/app/(tabs)/riwayat.tsx
 
 import { useState, useCallback } from "react";
-import { View, Text, Button, Alert } from "react-native";
+import { View, Text, Button, Alert, Platform } from "react-native";
 import { useFocusEffect } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { ambilSemuaFavorit, hapusFavorit } from "../../services/favoritStorage";
@@ -16,30 +16,39 @@ export default function TabRiwayat() {
     }, []),
   );
 
-  function hapus(id: number, nama: string) {
-    Alert.alert(
-      "Konfirmasi Hapus",
-      `Yakin ingin menghapus ${nama} dari favorit?`,
-      [
-        {
-          text: "Batal",
-          style: "cancel",
-        },
-        {
-          text: "Hapus",
-          style: "destructive",
-          onPress: async () => {
-            try {
-              await hapusFavorit(id);
+  async function jalankanHapus(id: number) {
+    try {
+      await hapusFavorit(id);
+      setDaftarFavorit((prev) => prev.filter((kota) => kota.id !== id));
+    } catch {
+      if (Platform.OS === "web") {
+        window.alert("Kota favorit gagal dihapus.");
+      } else {
+        Alert.alert("Gagal", "Kota favorit gagal dihapus.");
+      }
+    }
+  }
 
-              setDaftarFavorit((prev) => prev.filter((kota) => kota.id !== id));
-            } catch (error) {
-              Alert.alert("Gagal", "Kota favorit gagal dihapus.");
-            }
-          },
-        },
-      ],
-    );
+  function hapus(id: number, nama: string) {
+    const pesan = `Yakin ingin menghapus ${nama} dari favorit?`;
+
+    if (Platform.OS === "web") {
+      // Alert.alert tidak berfungsi di react-native-web,
+      // jadi pakai dialog konfirmasi bawaan browser.
+      if (typeof window !== "undefined" && window.confirm(pesan)) {
+        jalankanHapus(id);
+      }
+      return;
+    }
+
+    Alert.alert("Konfirmasi Hapus", pesan, [
+      { text: "Batal", style: "cancel" },
+      {
+        text: "Hapus",
+        style: "destructive",
+        onPress: () => jalankanHapus(id),
+      },
+    ]);
   }
 
   return (
